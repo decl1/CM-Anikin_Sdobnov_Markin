@@ -1,5 +1,6 @@
 # /USER IMPORT/ BEGIN
 import strategies
+import generate_data as generator
 # /USER IMPORT/ END
 
 # /THIRD PARTY/ BEGIN
@@ -54,8 +55,13 @@ class DecisionSupportSystem:
         self.extra_conditions = tk.BooleanVar()
         tk.Checkbutton(input_frame, variable=self.extra_conditions).grid(row=5, column=1, sticky="w")
 
+        # Количество экспериметров
+        tk.Label(input_frame, text="Количество экспериментров:").grid(row=6, column=0, sticky="w")
+        self.daily_mass = tk.Entry(input_frame, width=10)
+        self.daily_mass.grid(row=6, column=1)
+
         # Кнопка запуска
-        tk.Button(input_frame, text="Запуск", command=self.calculate).grid(row=6, column=0, columnspan=3)
+        tk.Button(input_frame, text="Запуск", command=self.calculate).grid(row=7, column=0, columnspan=3)
 
     def setup_output_frame(self):
         self.output_frame = tk.Frame(self.root, padx=10, pady=10)
@@ -66,7 +72,8 @@ class DecisionSupportSystem:
         
     def calculate(self):
         try:
-            result = strategies.output_example()
+            input_example = generator.input_example()
+            result = strategies.output_example(input_example)
 
             self.output_text.delete(1.0, tk.END)
             self.output_text.insert(tk.END, result)
