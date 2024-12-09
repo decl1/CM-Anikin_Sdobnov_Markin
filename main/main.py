@@ -61,7 +61,7 @@ class DecisionSupportSystem:
         self.daily_mass.grid(row=6, column=1)
 
         # Кнопка запуска
-        tk.Button(input_frame, text="Запуск", command=self.calculate).grid(row=7, column=0, columnspan=3)
+        tk.Button(input_frame, text="Запуск", command=self.runtime).grid(row=7, column=0, columnspan=3)
 
     def setup_output_frame(self):
         self.output_frame = tk.Frame(self.root, padx=10, pady=10)
