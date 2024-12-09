@@ -1,7 +1,6 @@
 # strategies library
 import numpy as np
 
-
 def output_example(input_example):
     return "example: " + input_example
 
@@ -10,8 +9,7 @@ def output_example(input_example):
 #Матрица расстояний рассматривается по столбцам. Таким образом имитируется нечеткая задача.
 #Функции возвращают число - максимальную сумму перестановки партий по этапам, полученную с помощью
 # соответствующего алгоритма, то есть S(b)
-#
-#
+
 def greedy_strategy(num_batches, num_stages, s_matrix):
     result = 0
     used_batches = []
@@ -73,12 +71,3 @@ def greedy_thrifty_strategy(num_batches, num_stages, s_matrix, swap_stage):
         result += max_elem
         used_batches.append(column.index(max_elem))
     return result
-
-if __name__ == "__main__":
-    s_matrix = [[10, 5, 2],
-                [7, 3, 1],
-                [3, 2, 1]]
-    print(greedy_strategy(num_batches=3, num_stages=3, s_matrix=s_matrix))
-    print(thrifty_strategy(num_batches=3, num_stages=3, s_matrix=s_matrix))
-    print(thrifty_greedy_strategy(num_batches=3, num_stages=3, s_matrix=s_matrix, swap_stage=1))
-    print(greedy_thrifty_strategy(num_batches=3, num_stages=3, s_matrix=s_matrix, swap_stage=1))
