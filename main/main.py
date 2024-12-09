@@ -70,7 +70,7 @@ class DecisionSupportSystem:
         self.output_text = tk.Text(self.output_frame, wrap="word", height=20, width=50)
         self.output_text.pack(fill=tk.BOTH, expand=True)
         
-    def calculate(self):
+    def runtime(self):
         try:
             input_example = generator.input_example()
             result = strategies.output_example(input_example)
