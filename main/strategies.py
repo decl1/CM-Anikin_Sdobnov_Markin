@@ -1,5 +1,5 @@
 # strategies library
-import numpy as np
+from hungarian_algorithm import algorithm
 
 
 def output_example(input_example):
@@ -98,12 +98,22 @@ def tkg_strategy(num_batches, num_stages, s_matrix, swap_stage, k):
 
     return result
 
+def hungarian_strategy(s_matrix):
+    matrix = {
+        f"#{row_idx}": {str(col_idx): s_matrix[row_idx][col_idx] for col_idx in range(len(s_matrix[row_idx]))}
+        for row_idx in range(len(s_matrix))
+    }
+    return algorithm.find_matching(matrix, matching_type='max', return_type='total')
+
+
 if __name__ == "__main__":
     s_matrix = [[10, 5, 2],
                 [7, 3, 1],
-                [3, 2, 1]]
-    print(greedy_strategy(num_batches=3, num_stages=3, s_matrix=s_matrix))
-    print(thrifty_strategy(num_batches=3, num_stages=3, s_matrix=s_matrix))
-    print(thrifty_greedy_strategy(num_batches=3, num_stages=3, s_matrix=s_matrix, swap_stage=1))
-    print(greedy_thrifty_strategy(num_batches=3, num_stages=3, s_matrix=s_matrix, swap_stage=1))
-    print(tkg_strategy(num_batches=3, num_stages=3, s_matrix=s_matrix, swap_stage=1, k=1))
+                [3, 2, 1],
+                [1, 1, 1]]
+    print(greedy_strategy(num_batches=4, num_stages=3, s_matrix=s_matrix))
+    print(thrifty_strategy(num_batches=4, num_stages=3, s_matrix=s_matrix))
+    print(thrifty_greedy_strategy(num_batches=4, num_stages=3, s_matrix=s_matrix, swap_stage=1))
+    print(greedy_thrifty_strategy(num_batches=4, num_stages=3, s_matrix=s_matrix, swap_stage=1))
+    print(tkg_strategy(num_batches=4, num_stages=3, s_matrix=s_matrix, swap_stage=1, k=1))
+    print(hungarian_strategy(s_matrix))
