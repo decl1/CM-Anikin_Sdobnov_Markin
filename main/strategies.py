@@ -217,11 +217,4 @@ if __name__ == "__main__":
                 [7, 3, 1],
                 [3, 2, 1],
                 [1, 1, 1]]
-    #print(greedy_strategy(num_batches=4, num_stages=3, s_matrix=s_matrix))
-    #print(thrifty_strategy(num_batches=4, num_stages=3, s_matrix=s_matrix))
-    #print(thrifty_greedy_strategy(num_batches=4, num_stages=3, s_matrix=s_matrix, swap_stage=1))
-    #print(greedy_thrifty_strategy(num_batches=4, num_stages=3, s_matrix=s_matrix, swap_stage=1))
-    #print(tkg_strategy(num_batches=4, num_stages=3, s_matrix=s_matrix, swap_stage=1, k=1))
-    #print(hungarian_strategy(s_matrix))
-    #print(average_strategy(num_batches=4, num_stages=3, s_matrix=s_matrix))
     print(run_virtual_experiments(30,3000, 7, 20, 15, 0.12, 0.22, 0.85, 1.0))
