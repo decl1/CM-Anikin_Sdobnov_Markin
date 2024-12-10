@@ -67,9 +67,9 @@ class DecisionSupportSystem:
         input_frame.pack(side=tk.LEFT, fill=tk.Y)
         
         # Количество партий
-        tk.Label(input_frame, text="Кол-во партий:").grid(row=0, column=0, sticky="w")
-        self.batches = tk.Entry(input_frame, width=10)
-        self.batches.grid(row=0, column=1)
+        tk.Label(input_frame, text="Кол-во партий, Этапов: ").grid(row=0, column=0, sticky="w")
+        self.partiiandetapi = tk.Entry(input_frame, width=10)
+        self.partiiandetapi.grid(row=0, column=1)
 
         # Длительность этапа
         tk.Label(input_frame, text="Длительность этапа: 7 дней").grid(row=1, column=0, sticky="w")
@@ -120,7 +120,7 @@ class DecisionSupportSystem:
         fig = Figure(figsize=(5, 4), dpi=100)
         self.ax = fig.add_subplot(111)
         # Исходные данные
-        self.categories = ["A", "B", "C", "D", "E"]
+        self.categories = ["Greedy", "Thrifty", "Thrifty/Greedy", "Greedy/Thrifty", "T(k)G",  "Average"]
         self.datasets = []  # Список для хранения всех наборов данных
         # Настройки осей
         self.ax.set_title("Количество накопленого сахара")
@@ -138,11 +138,27 @@ class DecisionSupportSystem:
         self.ax.clear()
         self.datasets.clear()
         #добавление графиков
-        values = [5, 7, 3, 8, 4]
-        add_new_bars(self.datasets,self.categories, values, "1", "blue", self.ax, self.canvas)
-        values = [1, 2, 4, 5, 1]
-        add_new_bars(self.datasets,self.categories, values, "2", "red", self.ax, self.canvas)
-        show_warning("aboba")
+        total_results = strategies.run_virtual_experiments(int(self.exp_number.get()),int(self.daily_mass.get()),7,int(self.partiiandetapi.get()),
+                                                           int(self.partiiandetapi.get()), 1,
+                                                           float(self.sugar_deviation_min.get()),float(self.sugar_deviation_max.get()),
+                                                           float(self.deviation_min.get()),float(self.deviation_max.get()),
+                                                           False, int(self.ripening_number.get()), bool(self.extra_conditions.get()))
+        values_sugar = []
+        values_losses = []
+        for strategy in total_results:
+            values_sugar.append(total_results[strategy]['sugar'])
+            values_losses.append(total_results[strategy]['losses'])
+        max_sugar = 0
+        max_index = 0
+        i = -1
+        for sugar in values_sugar:
+            i += 1
+            if sugar > max_sugar:
+                max_sugar = sugar
+                max_index = i
+        add_new_bars(self.datasets,self.categories, values_sugar, "Sugar", "blue", self.ax, self.canvas)
+        add_new_bars(self.datasets,self.categories, values_losses, "Losses", "red", self.ax, self.canvas)
+        show_warning(self.categories[max_index])
 
 
 if __name__ == "__main__":
