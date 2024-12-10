@@ -104,6 +104,32 @@ def hungarian_strategy(s_matrix):
     }
     return algorithm.find_matching(matrix, matching_type='max', return_type='total')
 
+#Наша эвристическая функция. На каждом этапе выбирает партию наиболее близкую к среднему значению
+#
+def average_strategy(num_batches, num_stages, s_matrix):
+    result = 0
+    used_batches = []
+    for j in range(num_stages):
+        # Строим текущий столбец
+        column = [s_matrix[i][j] for i in range(num_batches)]
+
+        # Исключаем уже использованные партии
+        for batch in used_batches:
+            column[batch] = -1
+
+        # Вычисляем среднее арифметическое для текущего столбца
+        avg = sum(column) / len([x for x in column if x != -1])
+
+        # Находим элемент, ближайший к среднему
+        closest_value = min(column, key=lambda x: abs(x - avg) if x != -1 else float('inf'))
+
+        # Добавляем выбранный элемент в результат
+        result += closest_value
+
+        # Добавляем индекс выбранной партии в список использованных
+        used_batches.append(column.index(closest_value))
+
+    return result
 
 if __name__ == "__main__":
     s_matrix = [[10, 5, 2],
@@ -116,3 +142,4 @@ if __name__ == "__main__":
     print(greedy_thrifty_strategy(num_batches=4, num_stages=3, s_matrix=s_matrix, swap_stage=1))
     print(tkg_strategy(num_batches=4, num_stages=3, s_matrix=s_matrix, swap_stage=1, k=1))
     print(hungarian_strategy(s_matrix))
+    print(average_strategy(num_batches=4, num_stages=3, s_matrix=s_matrix))
