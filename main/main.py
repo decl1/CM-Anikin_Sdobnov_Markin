@@ -139,7 +139,7 @@ class DecisionSupportSystem:
         self.datasets.clear()
         #добавление графиков
         total_results = strategies.run_virtual_experiments(int(self.exp_number.get()),int(self.daily_mass.get()),7,int(self.partiiandetapi.get()),
-                                                           int(self.partiiandetapi.get()),
+                                                           int(self.partiiandetapi.get()), 1,
                                                            float(self.sugar_deviation_min.get()),float(self.sugar_deviation_max.get()),
                                                            float(self.deviation_min.get()),float(self.deviation_max.get()),
                                                            False, int(self.ripening_number.get()), bool(self.extra_conditions.get()))
