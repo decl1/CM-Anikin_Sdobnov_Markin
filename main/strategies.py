@@ -129,12 +129,6 @@ def hungarian_strategy(s_matrix):
         total += value
 
     return total
-#    matrix = {
-#        f"#{row_idx}": {str(col_idx): s_matrix[row_idx][col_idx] for col_idx in range(len(s_matrix[row_idx]))}
-#        for row_idx in range(len(s_matrix))
-#    }
-#    print(matrix)
-#    return algorithm.find_matching(matrix, matching_type='max', return_type='total')
 
 
 # Наша эвристическая функция. На каждом этапе выбирает партию наиболее близкую к среднему значению
@@ -164,13 +158,12 @@ def average_strategy(num_batches, num_stages, s_matrix):
     return result
 
 
-def experiment(m, d, batches, stages, sugarMin, sugarMax, degMin, degMax, concentrate=False, ripening=0, inoInf=False):
+def experiment(m, d, batches, stages, swap_stage, sugarMin, sugarMax, degMin, degMax, concentrate=False, ripening=0, inoInf=False):
     _, _, s_matrix = generator.generate(batches_=batches, stages_=stages, sugarMin_=sugarMin,
-                                                   sugarMax_=sugarMax, degMin_=degMin,
-                                                   degMax_=degMax, concentrate_=concentrate, ripening_=ripening,
-                                                   inoInf_=inoInf)
+                                        sugarMax_=sugarMax, degMin_=degMin,
+                                        degMax_=degMax, concentrate_=concentrate, ripening_=ripening,
+                                        inoInf_=inoInf)
 
-    swap_stage = stages // 2
     k = stages - swap_stage
 
     results = {strategy: {'sugar': 0, 'losses': 0} for strategy in
@@ -194,12 +187,16 @@ def experiment(m, d, batches, stages, sugarMin, sugarMax, degMin, degMax, concen
 
     return results
 
-def run_virtual_experiments(num_experiments, m, d, batches, stages, sugarMin, sugarMax, degMin, degMax, concentrate=False, ripening=0, inoInf=False):
-    total_results = {strategy: {'sugar': 0, 'losses': 0} for strategy in ["Greedy", "Thrifty", "Thrifty/Greedy", "Greedy/Thrifty", "T(k)G",  "Average"]}
+
+def run_virtual_experiments(num_experiments, m, d, batches, stages, swap_stage, sugarMin, sugarMax, degMin, degMax,
+                            concentrate=False, ripening=0, inoInf=False):
+    total_results = {strategy: {'sugar': 0, 'losses': 0} for strategy in
+                     ["Greedy", "Thrifty", "Thrifty/Greedy", "Greedy/Thrifty", "T(k)G", "Average"]}
 
     for _ in range(num_experiments):
 
-        experiment_results = experiment(m, d, batches, stages, sugarMin, sugarMax, degMin, degMax, concentrate, ripening, inoInf)
+        experiment_results = experiment(m, d, batches, stages, swap_stage, sugarMin, sugarMax, degMin, degMax, concentrate,
+                                        ripening, inoInf)
         for strategy, value in experiment_results.items():
             total_results[strategy]['sugar'] += value['sugar']
             total_results[strategy]['losses'] += value['losses']
@@ -217,4 +214,4 @@ if __name__ == "__main__":
                 [7, 3, 1],
                 [3, 2, 1],
                 [1, 1, 1]]
-    print(run_virtual_experiments(30,3000, 7, 20, 15, 0.12, 0.22, 0.85, 1.0))
+    print(run_virtual_experiments(300, 3000, 7, 15, 15, 7, 0.12, 0.22, 0.85, 1.0))
