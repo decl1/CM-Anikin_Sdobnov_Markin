@@ -56,5 +56,6 @@ def generate(batches_, stages_, sugarMin_, sugarMax_, degMin_, degMax_, concentr
         lossMatrix = [[0 for i in range(stages_)] for j in range(batches_)]
     CMatrix = sugarMatrix
     LMatrix = lossMatrix
-    SMatrix = [[CMatrix[i][j] - LMatrix[i][j] for j in range(stages_)] for i in range(batches_)]
+    SMatrix = [[CMatrix[i][j] * (1 - LMatrix[i][j]) for j in range(stages_)] for i in range(batches_)]
     return (CMatrix,LMatrix,SMatrix)
+print(generate(20, 20, 0.15,0.22, 0.82,0.96, True, 2, True)[1])
