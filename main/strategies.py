@@ -207,11 +207,3 @@ def run_virtual_experiments(num_experiments, m, d, batches, stages, swap_stage, 
         total_results[strategy]['losses'] /= num_experiments
 
     return total_results
-
-
-if __name__ == "__main__":
-    s_matrix = [[10, 5, 2],
-                [7, 3, 1],
-                [3, 2, 1],
-                [1, 1, 1]]
-    print(run_virtual_experiments(300, 3000, 7, 15, 15, 7, 0.12, 0.22, 0.85, 1.0))

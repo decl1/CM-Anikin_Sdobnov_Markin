@@ -103,13 +103,17 @@ class DecisionSupportSystem:
         self.ripening_number = tk.Entry(input_frame, width=10)
         self.ripening_number.grid(row=6, column=1)
 
+        self.selected_option = False
+        tk.Radiobutton(input_frame, text="Концентрированное распределение", variable=self.selected_option, value=True).grid(row=7,column=0,sticky="w")
+        tk.Radiobutton(input_frame, text="Нормальное распределение", variable=self.selected_option, value=False).grid(row=8,column=0,sticky="w")
+
         # Количество экспериметров
-        tk.Label(input_frame, text="Количество экспериментов:").grid(row=7, column=0, sticky="w")
+        tk.Label(input_frame, text="Количество экспериментов:").grid(row=9, column=0, sticky="w")
         self.exp_number = tk.Entry(input_frame, width=10)
-        self.exp_number.grid(row=7, column=1)
+        self.exp_number.grid(row=9, column=1)
 
         # Кнопка запуска
-        tk.Button(input_frame, text="Запуск", command=self.runtime).grid(row=8, column=0, columnspan=3)
+        tk.Button(input_frame, text="Запуск", command=self.runtime).grid(row=10, column=0, columnspan=3)
 
     def setup_output_frame(self):
         # Создаем контейнер для графика
@@ -142,12 +146,14 @@ class DecisionSupportSystem:
                                                            int(self.partiiandetapi.get()), 1,
                                                            float(self.sugar_deviation_min.get()),float(self.sugar_deviation_max.get()),
                                                            float(self.deviation_min.get()),float(self.deviation_max.get()),
-                                                           False, int(self.ripening_number.get()), bool(self.extra_conditions.get()))
+                                                           self.selected_option, int(self.ripening_number.get()), bool(self.extra_conditions.get()))
         values_sugar = []
         values_losses = []
         for strategy in total_results:
             values_sugar.append(total_results[strategy]['sugar'])
             values_losses.append(total_results[strategy]['losses'])
+        values_sugar = [round(num, 3) for num in values_sugar]
+        values_losses = [round(num, 3) for num in values_losses]
         max_sugar = 0
         max_index = 0
         i = -1
