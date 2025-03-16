@@ -32,7 +32,7 @@ def greedy_strategy(n, s_matrix):
         result += max_elem
         index = column.index(max_elem)
         used_batches.append(index)
-        selected_indices.append((index, j))
+        selected_indices.append(index)
     
     return result, selected_indices
 
@@ -50,7 +50,7 @@ def thrifty_strategy(n, s_matrix):
         result += min_elem
         index = column.index(min_elem)
         used_batches.append(index)
-        selected_indices.append((index, j))
+        selected_indices.append(index)
     
     return result, selected_indices
 
@@ -68,7 +68,7 @@ def thrifty_greedy_strategy(n, s_matrix, swap_stage):
         result += min_elem
         index = column.index(min_elem)
         used_batches.append(index)
-        selected_indices.append((index, j))
+        selected_indices.append(index)
     
     for j in range(swap_stage, n):
         column = [s_matrix[i][j] for i in range(n)]
@@ -78,7 +78,7 @@ def thrifty_greedy_strategy(n, s_matrix, swap_stage):
         result += max_elem
         index = column.index(max_elem)
         used_batches.append(index)
-        selected_indices.append((index, j))
+        selected_indices.append(index)
     
     return result, selected_indices
 
@@ -96,7 +96,7 @@ def greedy_thrifty_strategy(n, s_matrix, swap_stage):
         result += max_elem
         index = column.index(max_elem)
         used_batches.append(index)
-        selected_indices.append((index, j))
+        selected_indices.append(index)
     
     for j in range(swap_stage, n):
         column = [s_matrix[i][j] for i in range(n)]
@@ -106,7 +106,7 @@ def greedy_thrifty_strategy(n, s_matrix, swap_stage):
         result += min_elem
         index = column.index(min_elem)
         used_batches.append(index)
-        selected_indices.append((index, j))
+        selected_indices.append(index)
     
     return result, selected_indices
 
@@ -126,7 +126,7 @@ def tkg_strategy(n, s_matrix, swap_stage, k):
         result += min_elem
         index = column.index(min_elem)
         used_batches.append(index)
-        selected_indices.append((index, j))
+        selected_indices.append(index)
     
     for j in range(swap_stage, n):
         column = [s_matrix[i][j] for i in range(n)]
@@ -136,7 +136,7 @@ def tkg_strategy(n, s_matrix, swap_stage, k):
         result += max_elem
         index = column.index(max_elem)
         used_batches.append(index)
-        selected_indices.append((index, j))
+        selected_indices.append(index)
     
     return result, selected_indices
 
@@ -159,7 +159,7 @@ def hungarian_strategy(s_matrix):
     for row, column in indexes:
         value = s_matrix[row][column]
         total += value
-        selected_indices.append((row, column))
+        selected_indices.append(row)
     
     return total, selected_indices
 
@@ -173,7 +173,7 @@ def calculate_S1(S2, x, C):
 def run_experiment(n, min_c, max_C, min_X, max_X):
     C, X, G = g.generate(n, min_c, max_C, min_X, max_X)
     results = []
-    swap_stage = n / 3
+    swap_stage = int(n / 3)
     k = n - swap_stage
 
     algorithms = [
@@ -191,13 +191,13 @@ def run_experiment(n, min_c, max_C, min_X, max_X):
 
     for name, algorithm, args in algorithms:
         value, indices = algorithm(*args)
-        S1 = calculate_S1(value, [C[i][j] for i, j in indices], C)
-        loss = hungarian_value - S1
+        S1 = calculate_S1(value, [X[i] for i in indices], C)
+        loss = hungarian_value - value
         results.append({
             "Algorithm": name,
             "Indices": indices,
-            "Sum": value,
             "S1": S1,
+            "S2": value,
             "Loss": loss
         })
         if 0 < loss < min_loss:

@@ -4,6 +4,17 @@ from tkinter import ttk, messagebox
 import random
 import numpy as np
 
+# /USER IMPORT/ BEGIN
+import strategies
+import generate_data as generator
+# /USER IMPORT/ END
+
+results = 0
+Ci = [[]]
+Xi = []
+Di = [[]]
+Gi = [[]]
+
 # Функция для анализа данных (заглушка)
 def analyze_data():
     try:
@@ -23,23 +34,18 @@ def analyze_data():
         if limit_min > limit_max:
             raise ValueError("Нижний предел генерации больше верхнего")
         
-        ksi = ksi_entry.get()
-        if not ksi.replace(".", "").isdigit() or float(ksi) < 0 or float(ksi) > 1:
-            raise ValueError("Коэффициент кси должен быть числом от 0 до 1.")
-        
         # Очистка таблицы перед заполнением новыми данными
         for row in table.get_children():
             table.delete(row)
-        
+
+        global Ci
+        global Xi
+        global Di
+        global Gi
+        results, Ci, Xi, Di, Gi = strategies.run_experiment(int(entry.get()), float(limit_min), float(limit_max), float(ksi_min.get()), float(ksi_max.get()))
         # Заполнение таблицы случайными значениями
-        for i in range(5):
-            strategy = f"Стратегия {i+1}"
-            assignments = random.randint(1, 100)
-            s1 = random.randint(1, 100)
-            s2 = random.randint(1, 100)
-            losses = random.randint(1, 100)
-            table.insert("", "end", values=(strategy, assignments, s1, s2, losses))
-        analyzed = True
+        for i in range(6):
+            table.insert("", "end", values=(results[i]["Algorithm"],results[i]["Indices"],"{:.2f}".format(results[i]["S1"]),"{:.2f}".format(results[i]["S2"]),"{:.2f}".format(results[i]["Loss"])))
     except ValueError as e:
         # Всплывающее окно с ошибкой
         messagebox.showerror("Ошибка", str(e))
@@ -51,13 +57,9 @@ def show_data():
         if not n.isdigit():
             raise ValueError("Размер матрицы должен быть числом.")
         n = int(n)
-                
+
         # Генерация матрицы C, вектора x, матрицы D и матрицы G
         limit = float(limit_entry_min.get()) if limit_entry_max.get() else 10  # Предел генерации
-        C = np.random.uniform(0, limit, (n, n))  # Матрица C
-        x = np.random.uniform(0, limit, n)       # Вектор x
-        D = np.random.uniform(0, limit, (n, n))  # Матрица D
-        G = np.random.uniform(0, limit, (n, n))  # Матрица G
         
         # Создание всплывающего окна
         popup = tk.Toplevel(root)
@@ -74,7 +76,7 @@ def show_data():
         C_frame.grid(row=0, column=1, padx=10, pady=10)
         for i in range(n):
             for j in range(n):
-                label = tk.Label(C_frame, text=f"{C[i, j]:.2f}", bg='#2E2E2E', fg='white', font=font, borderwidth=1, relief="solid")
+                label = tk.Label(C_frame, text=f"{Ci[i][j]:.2f}", bg='#2E2E2E', fg='white', font=font, borderwidth=1, relief="solid")
                 label.grid(row=i, column=j, padx=1, pady=1)
         
         # Отображение вектора x
@@ -82,7 +84,7 @@ def show_data():
         x_frame = tk.Frame(popup, bg="white")  # Фрейм для вектора x с белыми границами
         x_frame.grid(row=1, column=1, padx=10, pady=10)
         for i in range(n):
-            label = tk.Label(x_frame, text=f"{x[i]:.2f}", bg='#2E2E2E', fg='white', font=font, borderwidth=1, relief="solid")
+            label = tk.Label(x_frame, text=f"{Xi[i]:.2f}", bg='#2E2E2E', fg='white', font=font, borderwidth=1, relief="solid")
             label.grid(row=0, column=i, padx=1, pady=1)
         
         # Отображение матрицы D
@@ -91,7 +93,7 @@ def show_data():
         D_frame.grid(row=2, column=1, padx=10, pady=10)
         for i in range(n):
             for j in range(n):
-                label = tk.Label(D_frame, text=f"{D[i, j]:.2f}", bg='#2E2E2E', fg='white', font=font, borderwidth=1, relief="solid")
+                label = tk.Label(D_frame, text=f"{Di[i][j]:.2f}", bg='#2E2E2E', fg='white', font=font, borderwidth=1, relief="solid")
                 label.grid(row=i, column=j, padx=1, pady=1)
         
         # Отображение матрицы G
@@ -100,7 +102,7 @@ def show_data():
         G_frame.grid(row=3, column=1, padx=10, pady=10)
         for i in range(n):
             for j in range(n):
-                label = tk.Label(G_frame, text=f"{G[i, j]:.2f}", bg='#2E2E2E', fg='white', font=font, borderwidth=1, relief="solid")
+                label = tk.Label(G_frame, text=f"{Gi[i][j]:.2f}", bg='#2E2E2E', fg='white', font=font, borderwidth=1, relief="solid")
                 label.grid(row=i, column=j, padx=1, pady=1)
     
     except ValueError as e:
@@ -126,9 +128,11 @@ limit_entry_max = tk.Entry(root,width=8)
 limit_entry_max.grid(row=1, column=2)
 
 # Поле для ввода коэффициента кси (от 0 до 1)
-tk.Label(root, text="Коэффициент ξ (от 0 до 1):", bg='#2E2E2E', fg='white',font=('Arial', 14, 'bold')).grid(row=2, column=0, padx=10, pady=10)
-ksi_entry = tk.Entry(root)
-ksi_entry.grid(row=2, column=1, padx=10, pady=10, columnspan=2)
+tk.Label(root, text="Предел X:", bg='#2E2E2E', fg='white',font=('Arial', 14, 'bold')).grid(row=2, column=0, padx=10, pady=10)
+ksi_min = tk.Entry(root, width=8)
+ksi_min.grid(row=2, column=1)
+ksi_max = tk.Entry(root,width=8)
+ksi_max.grid(row=2, column=2)
 
 # Кнопка "Анализировать"
 analyze_button = tk.Button(root, text="Анализировать", command=analyze_data, bg='white', fg='black',font=('Arial', 14, 'bold'),width=35)
