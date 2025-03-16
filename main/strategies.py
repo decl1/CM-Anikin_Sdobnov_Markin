@@ -170,8 +170,8 @@ def calculate_S1(S2, x, C):
     S1 = S2 + np.sum(x[:, None] * C)  # Вычисляем S1
     return S1
 
-def run_experiment(n, ):
-    C = generate(matrix_size, base_min, base_max, hi_min, hi_max)
+def run_experiment(n, min_c, max_C, min_X, max_X):
+    C, X, G = g.generate(n, min_c, max_C, min_X, max_X)
     results = []
     swap_stage = n / 3
     k = n - swap_stage
@@ -205,9 +205,9 @@ def run_experiment(n, ):
             best_order = indices
     
     if best_order:
-        D = generate_D(n, best_order)
+        D = g.GenerateDMatrix(C, X, best_order)
     else:
         D = None
     
 
-    return results, C, D
+    return results, C, X, D, G
