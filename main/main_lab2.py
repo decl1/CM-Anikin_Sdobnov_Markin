@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import ttk, messagebox
+from tkinter import font
 import random
 import numpy as np
 
@@ -45,7 +46,7 @@ def analyze_data():
         results, Ci, Xi, Di, Gi = strategies.run_experiment(int(entry.get()), float(limit_min), float(limit_max), float(ksi_min.get()), float(ksi_max.get()))
         # Заполнение таблицы случайными значениями
         for i in range(6):
-            table.insert("", "end", values=(results[i]["Algorithm"],results[i]["Indices"],"{:.2f}".format(results[i]["S1"]),"{:.2f}".format(results[i]["S2"]),"{:.2f}".format(results[i]["Loss"])))
+            table.insert("", "end", values=(results[i]["Algorithm"],results[i]["Indices"],round(results[i]["S1"],2),round(results[i]["S2"],2),round(results[i]["Loss"],2)))
     except ValueError as e:
         # Всплывающее окно с ошибкой
         messagebox.showerror("Ошибка", str(e))
@@ -113,33 +114,35 @@ def show_data():
 root = tk.Tk()
 root.title("Анализ матрицы")
 root.configure(bg='#2E2E2E')  # Темно-серый фон
-root.resizable(False, False)  # Запрет изменения размера окна
+root.resizable(True, True)  # Запрет изменения размера окна
+text_font = font.Font(family="Arial", size=20)
+text_font_bold = font.Font(family="Arial", size=20, weight='bold')
 
 # Поле для ввода размера матрицы
-tk.Label(root, text="Введите размер матрицы (n):", bg='#2E2E2E', fg='white',font=('Arial', 14, 'bold')).grid(row=0, column=0, padx=10, pady=10)
+tk.Label(root, text="Введите размер матрицы (n):", bg='#2E2E2E', fg='white',font=text_font_bold).grid(row=0, column=0, padx=10, pady=10)
 entry = tk.Entry(root)
 entry.grid(row=0, column=1, padx=10, pady=10, columnspan=2)
 
 # Поле для ввода предела генерации матрицы С
-tk.Label(root, text="Предел генерации матрицы С:", bg='#2E2E2E', fg='white',font=('Arial', 14, 'bold')).grid(row=1, column=0, padx=10, pady=10)
+tk.Label(root, text="Предел генерации матрицы С:", bg='#2E2E2E', fg='white',font=text_font_bold).grid(row=1, column=0, padx=10, pady=10)
 limit_entry_min = tk.Entry(root, width=8)
 limit_entry_min.grid(row=1, column=1)
 limit_entry_max = tk.Entry(root,width=8)
 limit_entry_max.grid(row=1, column=2)
 
 # Поле для ввода коэффициента кси (от 0 до 1)
-tk.Label(root, text="Предел X:", bg='#2E2E2E', fg='white',font=('Arial', 14, 'bold')).grid(row=2, column=0, padx=10, pady=10)
+tk.Label(root, text="Предел X:", bg='#2E2E2E', fg='white',font=text_font_bold).grid(row=2, column=0, padx=10, pady=10)
 ksi_min = tk.Entry(root, width=8)
 ksi_min.grid(row=2, column=1)
 ksi_max = tk.Entry(root,width=8)
 ksi_max.grid(row=2, column=2)
 
 # Кнопка "Анализировать"
-analyze_button = tk.Button(root, text="Анализировать", command=analyze_data, bg='white', fg='black',font=('Arial', 14, 'bold'),width=35)
+analyze_button = tk.Button(root, text="Анализировать", command=analyze_data, bg='white', fg='black',font=text_font_bold,width=35)
 analyze_button.grid(row=3, column=0, columnspan=3, pady=10)
 
 # Кнопка "Показать данные"
-show_data_button = tk.Button(root, text="Показать данные", command=show_data, bg='white', fg='black',font=('Arial', 14, 'bold'),width=35)
+show_data_button = tk.Button(root, text="Показать данные", command=show_data, bg='white', fg='black',font=text_font_bold,width=35)
 show_data_button.grid(row=4, column=0, columnspan=3, pady=10)
 
 # Настройка стиля для таблицы
@@ -153,14 +156,14 @@ style.configure("Treeview",
                 fieldbackground="#2E2E2E",  # Фон ячеек
                 borderwidth=1,        # Ширина границы
                 relief="solid",       # Стиль границы (solid для белых границ)
-                font=('Arial', 14),   # Шрифт данных в таблице (размер 14)
+                font=text_font,   # Шрифт данных в таблице (размер 14)
                 rowheight=30)         # Высота строки (для видимости границ)
 
 # Настройка заголовков таблицы
 style.configure("Treeview.Heading",
                 background="#2E2E2E",  # Темно-серый фон
                 foreground="white",   # Белый текст
-                font=('Arial', 14, 'bold'),  # Шрифт заголовков (размер 14, жирный)
+                font=text_font_bold,  # Шрифт заголовков (размер 14, жирный)
                 relief="solid")        # Стиль границы
 
 # Настройка выделенной строки
