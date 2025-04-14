@@ -111,36 +111,6 @@ def greedy_thrifty_strategy(n, s_matrix, swap_stage):
     return result, selected_indices
 
 
-def tkg_strategy(n, s_matrix, swap_stage, k):
-    result = 0
-    used_batches = []
-    selected_indices = []
-    
-    for j in range(swap_stage):
-        column = [s_matrix[i][j] for i in range(n)]
-        for batch in used_batches:
-            column[batch] = float("inf")
-        for _ in range(k):
-            column[column.index(min(column))] = float("inf")
-        min_elem = min(column)
-        result += min_elem
-        index = column.index(min_elem)
-        used_batches.append(index)
-        selected_indices.append(index)
-    
-    for j in range(swap_stage, n):
-        column = [s_matrix[i][j] for i in range(n)]
-        for batch in used_batches:
-            column[batch] = -1
-        max_elem = max(column)
-        result += max_elem
-        index = column.index(max_elem)
-        used_batches.append(index)
-        selected_indices.append(index)
-    
-    return result, selected_indices
-
-
 def hungarian_strategy(s_matrix):
     new_matrix = []
     
@@ -181,7 +151,6 @@ def run_experiment(n, min_c, max_C, min_X, max_X):
         ("Thrifty", thrifty_strategy, (n, C)),
         ("Thrifty-Greedy", thrifty_greedy_strategy, (n, C, swap_stage)),
         ("Greedy-Thrifty", greedy_thrifty_strategy, (n, C, swap_stage)),
-        ("TKG", tkg_strategy, (n, C, swap_stage, k)),
         ("Hungarian", hungarian_strategy, (C,))
     ]
     
